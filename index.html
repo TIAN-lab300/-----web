@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f4f6f3">
+    <title>个人待办</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <h1>个人待办</h1>
+      </header>
+
+      <p id="storage-notice" class="storage-notice" role="status" aria-live="polite" hidden></p>
+
+      <form id="add-task-form" class="add-task-form" novalidate>
+        <label class="field title-field" for="task-input">
+          <span class="field-label">任务</span>
+          <input
+            id="task-input"
+            name="title"
+            type="text"
+            placeholder="输入一项任务"
+            autocomplete="off"
+            aria-describedby="input-error"
+          >
+        </label>
+        <label class="field due-field" for="due-at-input">
+          <span class="field-label">截止时间</span>
+          <input
+            id="due-at-input"
+            name="dueAt"
+            type="datetime-local"
+            aria-describedby="input-error"
+          >
+        </label>
+        <button id="add-task-button" class="primary-button" type="submit">添加</button>
+        <p id="input-error" class="field-error" role="alert" hidden></p>
+      </form>
+
+      <nav class="filter-bar" aria-label="任务筛选">
+        <button type="button" data-filter="all" aria-pressed="true">全部</button>
+        <button type="button" data-filter="active" aria-pressed="false">未完成</button>
+        <button type="button" data-filter="completed" aria-pressed="false">已完成</button>
+      </nav>
+
+      <section class="task-section" aria-labelledby="task-list-heading">
+        <h2 id="task-list-heading" class="visually-hidden">任务列表</h2>
+        <ul id="task-list" class="task-list"></ul>
+        <p id="empty-state" class="empty-state" hidden></p>
+      </section>
+
+      <footer class="app-footer">
+        <p id="remaining-count" class="remaining-count" aria-live="polite">还有 0 项未完成</p>
+      </footer>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
