@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { groupTasksByDate } from "../../src/extensions/calendar.mjs";
+import { groupTasksByDate } from "../../src/extensions/calendar.js";
 
 test("groupTasksByDate groups tasks by local date inside the range", () => {
   const groups = groupTasksByDate(

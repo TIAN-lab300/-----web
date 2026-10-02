@@ -1,4 +1,4 @@
-import { createDefaultPreferences } from "./task-schema.mjs";
+import { createDefaultPreferences } from "./task-schema.js";
 
 const CURRENT_VERSION = 5;
 const SUPPORTED_VERSIONS = new Set([2, 3, 4, 5]);
@@ -43,7 +43,6 @@ function migrateVersion3To4(state) {
         timeZone:
           Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
       },
-      reminders: Array.isArray(task.reminders) ? task.reminders : [],
       subtasks: Array.isArray(task.subtasks) ? task.subtasks : [],
       seriesId: task.seriesId || null,
     })),
@@ -102,4 +101,3 @@ export function migrateState(state) {
     state: migrated,
   };
 }
-

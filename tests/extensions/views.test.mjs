@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import {
   getViewCounts,
   getViewTasks,
-} from "../../src/extensions/views.mjs";
+} from "../../src/extensions/views.js";
 
 const context = {
   now: "2026-10-02T12:00:00+08:00",

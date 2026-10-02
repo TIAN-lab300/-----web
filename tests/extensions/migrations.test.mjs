@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { migrateState } from "../../src/extensions/migrations.mjs";
+import { migrateState } from "../../src/extensions/migrations.js";
 
 test("migrateState upgrades version 2 data to version 5", () => {
   const result = migrateState({

@@ -7,7 +7,7 @@ import {
   removeSubtask,
   toggleSubtask,
   updateSubtask,
-} from "../../src/extensions/subtasks.mjs";
+} from "../../src/extensions/subtasks.js";
 
 function makeTask(overrides = {}) {
   return {

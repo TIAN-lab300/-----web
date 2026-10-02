@@ -1,4 +1,4 @@
-import { queryTasks } from "./query-engine.mjs";
+import { queryTasks } from "./query-engine.js";
 
 function getLocalDayBounds(nowValue) {
   const now = new Date(nowValue);

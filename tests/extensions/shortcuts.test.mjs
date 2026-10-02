@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { matchShortcut } from "../../src/extensions/shortcuts.mjs";
+import { matchShortcut } from "../../src/extensions/shortcuts.js";
 
 const shortcuts = [
   { id: "new-task", key: "n", ctrl: true },

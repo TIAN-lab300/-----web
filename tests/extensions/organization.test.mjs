@@ -11,7 +11,7 @@ import {
   deleteTag,
   toggleTaskTag,
   updateTaskNotes,
-} from "../../src/extensions/organization.mjs";
+} from "../../src/extensions/organization.js";
 
 function makeTask(overrides = {}) {
   return {

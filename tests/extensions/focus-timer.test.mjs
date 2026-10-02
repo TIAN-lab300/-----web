@@ -6,7 +6,7 @@ import {
   pauseFocusSession,
   resumeFocusSession,
   startFocusSession,
-} from "../../src/extensions/focus-timer.mjs";
+} from "../../src/extensions/focus-timer.js";
 
 test("focus timer tracks running, paused and resumed time", () => {
   const started = startFocusSession(null, "task-1", "2026-10-02T10:00:00.000Z");

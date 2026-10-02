@@ -6,7 +6,7 @@ import {
   createDefaultPreferences,
   createExtendedTask,
   normalizePriority,
-} from "../../src/extensions/task-schema.mjs";
+} from "../../src/extensions/task-schema.js";
 
 test("createExtendedTask fills all extension defaults", () => {
   const task = createExtendedTask(
@@ -35,7 +35,6 @@ test("createExtendedTask fills all extension defaults", () => {
       weekdays: [],
       timeZone: "UTC",
     },
-    reminders: [],
     categoryId: null,
     tagIds: [],
     priority: "none",

@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import {
   moveTask,
   reorderTasks,
-} from "../../src/extensions/manual-order.mjs";
+} from "../../src/extensions/manual-order.js";
 
 function makeTasks() {
   return [

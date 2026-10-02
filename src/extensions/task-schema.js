@@ -11,8 +11,8 @@ export const RECURRENCE_MODES = Object.freeze(["once", "daily", "weekly"]);
 export const DEFAULT_PREFERENCES = Object.freeze({
   theme: "system",
   view: "all",
-  sortBy: "manual",
-  sortDirection: "asc",
+  sortBy: "createdAt",
+  sortDirection: "desc",
 });
 
 export function createDefaultPreferences() {
@@ -91,7 +91,6 @@ export function createExtendedTask(input, options = {}) {
           timeZone,
         }
       : createDefaultRecurrence(timeZone),
-    reminders: Array.isArray(source.reminders) ? [...source.reminders] : [],
     categoryId: source.categoryId || null,
     tagIds: Array.isArray(source.tagIds) ? [...new Set(source.tagIds)] : [],
     priority: normalizePriority(source.priority),
@@ -109,4 +108,3 @@ export function createExtendedTask(input, options = {}) {
       : [],
   };
 }
-

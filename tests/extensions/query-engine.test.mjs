@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import {
   queryTasks,
   sortTasks,
-} from "../../src/extensions/query-engine.mjs";
+} from "../../src/extensions/query-engine.js";
 
 const context = {
   now: "2026-10-02T12:00:00+08:00",

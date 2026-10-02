@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { getNextOccurrence } from "../../src/extensions/recurrence.mjs";
+import { getNextOccurrence } from "../../src/extensions/recurrence.js";
 
 test("getNextOccurrence returns null for a one-time rule", () => {
   assert.equal(

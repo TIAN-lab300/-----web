@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#f4f6f3">
     <title>个人待办</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=20261002-stage-b">
   </head>
   <body>
     <main class="app-shell">
@@ -28,23 +28,119 @@
           >
         </label>
         <label class="field due-field" for="due-at-input">
-          <span class="field-label">截止时间</span>
+          <span class="field-label">截止时间 <span class="required-mark">必填</span></span>
           <input
             id="due-at-input"
             name="dueAt"
             type="datetime-local"
             aria-describedby="input-error"
+            required
           >
         </label>
         <button id="add-task-button" class="primary-button" type="submit">添加</button>
         <p id="input-error" class="field-error" role="alert" hidden></p>
+        <details class="advanced-fields">
+          <summary>更多选项</summary>
+          <div class="advanced-grid">
+            <label class="field" for="category-input">
+              <span class="field-label">分类</span>
+              <select id="category-input">
+                <option value="">未分类</option>
+                <option value="category-life">生活</option>
+                <option value="category-study">学习</option>
+              </select>
+            </label>
+            <label class="field" for="priority-input">
+              <span class="field-label">优先级 <span class="required-mark">必填</span></span>
+              <select id="priority-input" required>
+                <option value="">请选择</option>
+                <option value="low">低</option>
+                <option value="medium">中</option>
+                <option value="high">高</option>
+                <option value="urgent">紧急</option>
+              </select>
+            </label>
+            <label class="field" for="repeat-input">
+              <span class="field-label">重复</span>
+              <select id="repeat-input">
+                <option value="once">一次</option>
+                <option value="daily">每天</option>
+                <option value="weekly">每周</option>
+              </select>
+            </label>
+            <fieldset id="weekday-input" class="weekday-field" hidden>
+              <legend>重复星期</legend>
+              <label><input type="checkbox" value="1"> 周一</label>
+              <label><input type="checkbox" value="2"> 周二</label>
+              <label><input type="checkbox" value="3"> 周三</label>
+              <label><input type="checkbox" value="4"> 周四</label>
+              <label><input type="checkbox" value="5"> 周五</label>
+              <label><input type="checkbox" value="6"> 周六</label>
+              <label><input type="checkbox" value="0"> 周日</label>
+            </fieldset>
+            <label class="field tags-field" for="tag-input">
+              <span class="field-label">标签</span>
+              <select id="tag-input" multiple size="5">
+                <option value="tag-eating">吃饭</option>
+                <option value="tag-fitness">健身</option>
+                <option value="tag-reading">阅读</option>
+                <option value="tag-programming">编程</option>
+                <option value="tag-review">复习</option>
+              </select>
+            </label>
+            <label class="field notes-field" for="notes-input">
+              <span class="field-label">备注</span>
+              <textarea id="notes-input" rows="3"></textarea>
+            </label>
+          </div>
+        </details>
       </form>
 
-      <nav class="filter-bar" aria-label="任务筛选">
-        <button type="button" data-filter="all" aria-pressed="true">全部</button>
-        <button type="button" data-filter="active" aria-pressed="false">未完成</button>
-        <button type="button" data-filter="completed" aria-pressed="false">已完成</button>
+      <div class="task-toolbar">
+        <form id="search-form" class="search-field">
+          <span class="field-label">搜索</span>
+          <div class="search-input-row">
+            <label class="visually-hidden" for="search-input">搜索任务</label>
+            <input id="search-input" type="search" placeholder="搜索任务、标签、备注">
+            <button id="search-button" class="toolbar-button" type="submit">搜索</button>
+          </div>
+        </form>
+        <label class="sort-field" for="sort-select">
+          <span class="field-label">排序</span>
+          <select id="sort-select">
+            <option value="manual">手动顺序</option>
+            <option value="dueAt">截止时间</option>
+            <option value="createdAt">创建时间</option>
+            <option value="updatedAt">更新时间</option>
+            <option value="completionCount">完成次数</option>
+            <option value="priority">优先级</option>
+            <option value="title">标题</option>
+          </select>
+        </label>
+        <button id="sort-direction-button" class="toolbar-button" type="button">升序</button>
+        <button id="theme-toggle-button" class="toolbar-button" type="button">主题：自动</button>
+      </div>
+
+      <nav class="filter-bar" aria-label="任务视图">
+        <button type="button" data-view="all" aria-pressed="true">全部</button>
+        <button type="button" data-view="today" aria-pressed="false">今日</button>
+        <button type="button" data-view="upcoming" aria-pressed="false">即将到期</button>
+        <button type="button" data-view="completed" aria-pressed="false">已完成</button>
+        <button type="button" data-view="overdue" aria-pressed="false">已逾期</button>
+        <button type="button" data-view="calendar" aria-pressed="false">日历</button>
       </nav>
+
+      <section id="focus-panel" class="focus-panel" aria-live="polite" hidden>
+        <div>
+          <span class="field-label">专注中</span>
+          <strong id="focus-task-title"></strong>
+        </div>
+        <time id="focus-elapsed">00:00</time>
+        <div class="focus-actions">
+          <button id="focus-toggle-button" class="toolbar-button" type="button">暂停</button>
+          <button id="focus-finish-button" class="toolbar-button" type="button">结束</button>
+        </div>
+      </section>
 
       <section class="task-section" aria-labelledby="task-list-heading">
         <h2 id="task-list-heading" class="visually-hidden">任务列表</h2>
@@ -57,6 +153,8 @@
       </footer>
     </main>
 
-    <script src="app.js"></script>
+    <script>window.TODO_APP_DEFER_BOOTSTRAP = true;</script>
+    <script src="app.js?v=20261002-stage-b"></script>
+    <script type="module" src="src/app/main.js?v=20261002-stage-b"></script>
   </body>
 </html>

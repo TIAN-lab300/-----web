@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import {
   getNextThemePreference,
   resolveTheme,
-} from "../../src/extensions/theme.mjs";
+} from "../../src/extensions/theme.js";
 
 test("resolveTheme supports system, light and dark preferences", () => {
   assert.equal(resolveTheme("system", true), "dark");

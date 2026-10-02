@@ -25,8 +25,8 @@
 ### Task 1: 扩展任务模型和迁移
 
 **Files:**
-- Create: `src/extensions/task-schema.mjs`
-- Create: `src/extensions/migrations.mjs`
+- Create: `src/extensions/task-schema.js`
+- Create: `src/extensions/migrations.js`
 - Test: `tests/extensions/task-schema.test.mjs`
 - Test: `tests/extensions/migrations.test.mjs`
 
@@ -45,7 +45,7 @@
 ### Task 2: 分类、标签、优先级和备注
 
 **Files:**
-- Create: `src/extensions/organization.mjs`
+- Create: `src/extensions/organization.js`
 - Test: `tests/extensions/organization.test.mjs`
 
 **Interfaces:**
@@ -65,8 +65,8 @@
 ### Task 3: 子任务、进度和手动排序
 
 **Files:**
-- Create: `src/extensions/subtasks.mjs`
-- Create: `src/extensions/manual-order.mjs`
+- Create: `src/extensions/subtasks.js`
+- Create: `src/extensions/manual-order.js`
 - Test: `tests/extensions/subtasks.test.mjs`
 - Test: `tests/extensions/manual-order.test.mjs`
 
@@ -88,8 +88,8 @@
 ### Task 4: 搜索、筛选、排序和视图
 
 **Files:**
-- Create: `src/extensions/query-engine.mjs`
-- Create: `src/extensions/views.mjs`
+- Create: `src/extensions/query-engine.js`
+- Create: `src/extensions/views.js`
 - Test: `tests/extensions/query-engine.test.mjs`
 - Test: `tests/extensions/views.test.mjs`
 
@@ -108,9 +108,9 @@
 ### Task 5: 重复规则、提醒和日历分组
 
 **Files:**
-- Create: `src/extensions/recurrence.mjs`
-- Create: `src/extensions/reminders.mjs`
-- Create: `src/extensions/calendar.mjs`
+- Create: `src/extensions/recurrence.js`
+- Create: `src/extensions/reminders.js`
+- Create: `src/extensions/calendar.js`
 - Test: `tests/extensions/recurrence.test.mjs`
 - Test: `tests/extensions/reminders.test.mjs`
 - Test: `tests/extensions/calendar.test.mjs`
@@ -132,9 +132,9 @@
 ### Task 6: 主题、快捷键和专注计时器
 
 **Files:**
-- Create: `src/extensions/theme.mjs`
-- Create: `src/extensions/shortcuts.mjs`
-- Create: `src/extensions/focus-timer.mjs`
+- Create: `src/extensions/theme.js`
+- Create: `src/extensions/shortcuts.js`
+- Create: `src/extensions/focus-timer.js`
 - Test: `tests/extensions/theme.test.mjs`
 - Test: `tests/extensions/shortcuts.test.mjs`
 - Test: `tests/extensions/focus-timer.test.mjs`
@@ -157,9 +157,9 @@
 ### Task 7: 提醒同步、调度和推送适配
 
 **Files:**
-- Create: `src/extensions/reminder-sync.mjs`
-- Create: `src/extensions/reminder-scheduler.mjs`
-- Create: `src/extensions/push-adapter.mjs`
+- Create: `src/extensions/reminder-sync.js`
+- Create: `src/extensions/reminder-scheduler.js`
+- Create: `src/extensions/push-adapter.js`
 - Test: `tests/extensions/reminder-sync.test.mjs`
 - Test: `tests/extensions/reminder-scheduler.test.mjs`
 - Test: `tests/extensions/push-adapter.test.mjs`
