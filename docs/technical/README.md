@@ -1,8 +1,8 @@
 # 个人本地待办应用技术文档
 
-日期：2026-09-30  
-状态：待用户审阅  
-适用范围：个人本地待办应用 MVP
+日期：2026-10-02  
+状态：MVP 已实现；扩展设计待实现  
+适用范围：个人本地待办应用 MVP 与后台提醒扩展
 
 ## 1. 文档目的
 
@@ -13,31 +13,36 @@
 - 需求规格：`docs/superpowers/specs/2026-09-30-personal-todo-local-mvp-design.md`
 - 技术设计：`docs/superpowers/specs/2026-09-30-personal-todo-local-mvp-technical-design.md`
 - 存储规范：`docs/technical/storage.md`
+- 提醒服务：`docs/technical/reminders.md`
+- 服务端 API：`docs/technical/api.md`
 - 测试规范：`docs/technical/testing.md`
 
 ## 2. 系统边界
 
-本应用是一个纯前端、单用户、本地优先的静态 Web 应用。
+应用主体仍然是一个单用户、本地优先的 Web 应用。任务数据默认保存在浏览器中。为了支持浏览器关闭后的提醒，扩展架构增加 Service Worker、Web Push 和最小提醒后端。
 
 系统包含：
 
 - 浏览器页面
 - 页面交互逻辑
 - 浏览器本地存储
+- Service Worker
+- Web Push 订阅
+- 最小提醒后端
+- 提醒调度数据库
+- 推送服务
 
 系统不包含：
 
-- 后端服务
-- 数据库服务
 - 用户账号系统
-- 网络 API
+- 任务云同步
 - 第三方分析或跟踪服务
 
-因为不存在服务端接口，本阶段不提供 API 文档。
+提醒后端只处理设备订阅和提醒计划，不作为任务主数据的来源。服务端接口见 `docs/technical/api.md`。
 
 ## 3. 运行时结构
 
-第一版包含三个运行时文件：
+当前 MVP 包含三个运行时文件：
 
 ```text
 /
@@ -56,6 +61,21 @@
 
 不建立打包流程，不生成构建产物，不引入运行时依赖。
 
+后台提醒扩展会增加：
+
+```text
+sw.js
+src/
+└── reminder-client.js
+server/
+├── index.js
+├── scheduler.js
+├── push.js
+└── store.js
+```
+
+前端的任务主数据仍保存在本地。`server` 只保存完成 Web Push 所需的设备订阅、提醒时间和重复规则。
+
 测试文件不参与浏览器运行：
 
 ```text
@@ -66,9 +86,11 @@ tests
 
 ## 4. 运行方式
 
-应用可以通过静态服务器运行，也可以直接打开 `index.html`。
+当前 MVP 可以通过静态服务器运行，也可以直接打开 `index.html`。
 
 推荐在开发验证时使用静态服务器，以确保浏览器对当前站点来源和本地存储的行为一致。运行环境只需要支持现代浏览器和 `localStorage`。
+
+后台提醒扩展必须通过 HTTPS 或浏览器认可的 `localhost` 安全上下文运行，因为 Service Worker、通知权限和 Web Push 都要求安全上下文。
 
 验证步骤：
 
@@ -81,6 +103,8 @@ tests
 
 如果通过本地服务器访问，关闭服务器不会删除浏览器已经保存的数据。
 
+提醒扩展启动后还需要同时运行提醒 API 和调度器。具体环境变量、VAPID 密钥和接口见 `docs/technical/reminders.md` 与 `docs/technical/api.md`。
+
 ## 5. 架构与数据流
 
 ```text
@@ -88,6 +112,10 @@ tests
   -> DOM 事件
   -> 更新内存状态
   -> 写入 localStorage
+  -> 生成提醒同步变更
+  -> 同步到提醒后端
+  -> 后端在目标时间发送 Web Push
+  -> Service Worker 显示系统通知
   -> 重新渲染视图
 ```
 
@@ -106,6 +134,8 @@ tests
 - `tasks` 是需要持久化的数据。
 - `filter`、`editingTaskId` 和存储提示属于当前页面状态。
 - 筛选切换和编辑模式切换不写入本地存储。
+- `reminderSync` 保存尚未同步到后端的提醒变更。
+- 后端提醒计划是派生数据，不是任务主数据。
 
 ## 6. 逻辑职责
 
@@ -122,7 +152,20 @@ tests
 
 存储适配不直接操作 DOM。
 
-### 6.2 数据操作
+### 6.2 提醒同步
+
+负责：
+
+- 注册和检查 Service Worker
+- 请求和管理通知权限
+- 创建或刷新 PushSubscription
+- 将提醒计划变更同步到后端
+- 在离线时排队等待下次同步
+- 显示同步失败和权限被拒绝的提示
+
+提醒同步不能直接修改本地的任务完成状态。
+
+### 6.3 数据操作
 
 负责：
 
@@ -136,7 +179,7 @@ tests
 
 数据操作优先写成接收输入并返回结果的函数，便于独立验证。
 
-### 6.3 渲染
+### 6.4 渲染
 
 负责：
 
@@ -150,7 +193,7 @@ tests
 
 用户输入必须通过 `textContent` 或文本节点写入页面，不允许使用 `innerHTML` 拼接任务标题。
 
-### 6.4 事件处理
+### 6.5 事件处理
 
 负责：
 
@@ -173,7 +216,10 @@ appState
 ├── filter: "all" | "active" | "completed"
 ├── editingTaskId: string | null
 ├── storageAvailable: boolean
-└── storageNotice: string | null
+├── storageNotice: string | null
+├── reminderPermission: "default" | "granted" | "denied" | "unsupported"
+├── reminderSyncStatus: "idle" | "syncing" | "pending" | "error"
+└── reminderSyncNotice: string | null
 ```
 
 约束：
@@ -183,6 +229,9 @@ appState
 - `editingTaskId` 只能指向当前任务集合中的任务。
 - `storageAvailable` 初始值由启动检查决定。
 - `storageNotice` 为空表示没有需要显示的提示。
+- `reminderPermission` 反映浏览器通知权限，不写入任务数据。
+- `reminderSyncStatus` 反映提醒计划同步状态。
+- `reminderSyncNotice` 用于显示同步失败或权限问题。
 
 ## 8. 实现约定
 
@@ -227,7 +276,9 @@ appState
 - 排序使用 `createdAt`，最新任务优先。
 - 截止时间使用本地化格式显示到分钟。
 - 未完成且 `dueAt` 早于当前时间时派生“已逾期”。
-- 不按截止时间排序，不发送提醒。
+- 当前 MVP 不按截止时间排序。
+- 页面关闭后的提醒通过提醒后端和 Web Push 发送。
+- 页面打开时保留前端提醒作为回退和补偿机制。
 
 ## 9. 推荐实现顺序
 
@@ -239,6 +290,17 @@ appState
 6. 绑定表单、筛选栏和任务列表事件。
 7. 执行 `docs/technical/testing.md` 中的测试用例。
 8. 修复测试发现的问题并完成验收。
+
+后台提醒扩展的推荐顺序：
+
+1. 完成任务数据版本 4 和迁移。
+2. 实现提醒时间与重复规则计算。
+3. 实现页面内提醒和去重。
+4. 增加 Service Worker 和通知权限流程。
+5. 实现设备注册与提醒计划 API。
+6. 实现提醒调度器、Web Push 发送和重试。
+7. 接入前端同步与错误提示。
+8. 按目标平台执行页面关闭和浏览器关闭测试。
 
 ## 10. 性能与规模
 
@@ -255,12 +317,14 @@ appState
 
 ## 11. 安全与隐私
 
-- 应用不发送任务数据。
+- 任务主数据不上传，提醒后端只接收设备标识、订阅信息和提醒计划。
+- 通知正文是否包含任务标题必须单独确认，默认优先传输最少的必要内容。
 - 应用不读取无关的浏览器数据。
 - 任务标题只作为纯文本处理。
 - 不在控制台输出任务内容。
 - 不在 URL、Cookie 或页面查询参数中保存任务。
-- 本地存储数据会随站点数据清除而消失。
+- 本地任务数据会随站点数据清除而消失。
+- 清除站点数据后，设备需要重新订阅提醒。
 
 ## 12. 文档维护规则
 
